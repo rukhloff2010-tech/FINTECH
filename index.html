@@ -288,9 +288,9 @@
     }
 
     function sendProof(input) {
-      if (!input.files[0]) return;
+      if (!input.files || !input.files[0]) return;
       const file = input.files[0];
-      const prodName = CATALOG[selectedId].title;
+      const prodName = CATALOG[selectedId] ? CATALOG[selectedId].title : "Продукт";
 
       const formData = new FormData();
       formData.append('chat_id', ADMIN_ID);
@@ -300,14 +300,24 @@
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
         method: 'POST',
         body: formData
-      }).then(() => {
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.ok) {
+          console.error("Telegram API Error:", data);
+          alert("Ошибка отправки в Telegram: " + data.description);
+          return;
+        }
         setStep(3, 'cd_review');
         sendTgNotification(`✅ <b>FINTECH</b> | ЦД отправлено на проверку\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}`);
         if (tg?.showAlert) tg.showAlert("Скриншот успешно отправлен куратору FINTECH!");
         else alert("Скриншот успешно отправлен куратору FINTECH!");
+      })
+      .catch(err => {
+        console.error("Network error:", err);
+        alert("Ошибка сети при отправке скриншота");
       });
     }
-
     function requestPayout() {
       const prodName = CATALOG[selectedId].title;
       setStep(4, 'payout_wait');
@@ -327,16 +337,22 @@
     }
 
     function sendTgNotification(text) {
+      const payload = {
+        chat_id: GROUP_CHAT_ID,
+        text: text,
+        parse_mode: 'HTML'
+      };
+      
+      if (typeof THREAD_ID !== 'undefined' && THREAD_ID) {
+        payload.message_thread_id = Number(THREAD_ID);
+      }
+
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          chat_id: GROUP_CHAT_ID, 
-          message_thread_id: THREAD_ID, // 
-          text: text, 
-          parse_mode: 'HTML' 
-        })
-      });
+        body: JSON.stringify(payload)
+      }).catch(err => console.error("Error sending log:", err));
+    }
     }
 
     init();
