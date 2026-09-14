@@ -7,85 +7,85 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { background-color: #121214; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { background-color: #121214; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, sans-serif; -webkit-tap-highlight-color: transparent; }
     .card-bg { background-color: #1C1C1E; }
     .step-active { background-color: #2563EB; border-color: #3B82F6; }
     .step-done { background-color: #10B981; border-color: #10B981; }
   </style>
 </head>
-<body class="p-4 pb-28">
+<body class="p-4 pb-28 select-none">
 
-  <!-- Конфигурация Telegram API (Вставь свои данные) -->
   <script>
-  const BOT_TOKEN = "8741449800:AAGlrudGcl4Jz86IXv93dNHgfP95tiBFdxs";
-  const ADMIN_ID = "1850885518";
-  const GROUP_CHAT_ID = "-1004462228867";
-  const ADMIN_USERNAME = "mal0one";
-  const THREAD_ID = 5; 
-</script>
+    // ВСТАВЬ СЮДА СВОЙ СВЕЖИЙ ТОКЕН ИЗ BOTFATHER
+    const BOT_TOKEN = "8741449800:AAGlrudGcl4Jz86IXv93dNHgfP95tiBFdxs";
+    const ADMIN_ID = "1850885518";
+    const GROUP_CHAT_ID = "-1004462228867";
+    const ADMIN_USERNAME = "mal0one";
+    const THREAD_ID = null; // Поставь номер ветки (например 15) или оставь null
+  </script>
 
-  <!-- Шапка окна FINTECH -->
+  <!-- Шапка FINTECH -->
   <div class="flex justify-between items-center mb-4">
     <div>
       <div class="flex items-center gap-1.5">
         <span class="text-xs font-black tracking-widest text-blue-500 uppercase">FINTECH</span>
         <span class="text-zinc-600 text-xs">•</span>
         <h1 id="user_display_name" class="text-base font-bold text-white">Стажер</h1>
+        <button onclick="resetFilters()" class="text-zinc-500 hover:text-zinc-300 text-xs ml-1" title="Сбросить фильтр карт">⚙️</button>
       </div>
-      <p id="window_dates" class="text-xs text-zinc-400 mt-0.5">Загрузка окна...</p>
+      <p id="window_dates" class="text-xs text-zinc-400 mt-0.5">Окно выплат</p>
     </div>
     <span id="window_badge" class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-2.5 py-1 rounded-full font-bold">Окно #1</span>
   </div>
 
-  <!-- Экран начального онбординга FINTECH (чекбоксы "Уже есть") -->
+  <!-- Онбординг -->
   <div id="onboarding_screen" class="hidden">
     <div class="card-bg p-4 rounded-2xl border border-zinc-800 mb-4">
-      <h2 class="text-sm font-bold mb-1 text-white">Привет! Отметь, что у тебя уже есть ✋</h2>
-      <p class="text-xs text-zinc-400 mb-4">Эти продукты будут исключены из твоего списка аудита, чтобы не тратить время зря.</p>
-      <div id="onboard_checkboxes" class="space-y-2 mb-4"></div>
-      <button onclick="saveOnboarding()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition-all shadow-lg shadow-blue-600/20">
-        Сохранить и войти в FINTECH ➔
+      <h2 class="text-sm font-bold mb-1 text-white">Какие продукты у вас уже открыты? ✋</h2>
+      <p class="text-xs text-zinc-400 mb-4">Отметьте их галочками, чтобы исключить из работы. Если ничего нет — просто нажмите «Продолжить».</p>
+      <div id="onboard_checkboxes" class="space-y-2 mb-4 max-h-[60vh] overflow-y-auto pr-1"></div>
+      <button onclick="saveOnboarding()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white">
+        Продолжить ➔
       </button>
     </div>
   </div>
 
-  <!-- Основной каталог продуктов -->
-  <div id="main_screen" class="space-y-6">
+  <!-- Основной список каталога -->
+  <div id="main_screen" class="space-y-5">
     <div>
-      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Дебетовые карты</h2>
+      <h2 class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Дебетовые карты</h2>
       <div id="list_debit" class="space-y-2"></div>
     </div>
     <div>
-      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Кредитные карты</h2>
+      <h2 class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Кредитные карты</h2>
       <div id="list_credit" class="space-y-2"></div>
     </div>
-    <!-- НОВЫЙ ОТДЕЛЬНЫЙ РАЗДЕЛ ДЛЯ ИНВЕСТИЦИЙ -->
     <div>
-      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Инвестиции</h2>
+      <h2 class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Инвестиции</h2>
       <div id="list_invest" class="space-y-2"></div>
     </div>
     <div>
-      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">РКО и Регистрация бизнеса</h2>
+      <h2 class="text-[11px] font-bold text-zinc-500 uppercase tracking-wider mb-2">РКО и Регистрация бизнеса</h2>
       <div id="list_rko" class="space-y-2"></div>
     </div>
   </div>
 
-  <!-- Нижняя модальная панель (Степпер FINTECH) -->
+  <!-- Модальное окно по продукту -->
   <div id="modal_stepper" class="fixed inset-x-0 bottom-0 card-bg rounded-t-2xl p-5 border-t border-zinc-800 shadow-2xl hidden transition-all z-50">
     <div class="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-4"></div>
     <div class="flex justify-between items-start mb-4">
       <div>
-        <h3 id="modal_title" class="text-lg font-bold text-white">Название продукта</h3>
-        <p id="modal_desc" class="text-xs text-zinc-400">Описание целевого действия</p>
+        <h3 id="modal_title" class="text-lg font-bold text-white">Продукт</h3>
+        <p id="modal_desc" class="text-xs text-zinc-400">Условие ЦД</p>
       </div>
       <button onclick="closeModal()" class="text-zinc-500 text-sm px-2 py-1">✕</button>
     </div>
 
-    <!-- Степпер 1 - 2 - 3 - 4 -->
+    <!-- Степпер шагов -->
     <div class="flex justify-between items-center mb-6 px-2">
       <div class="text-center"><div id="dot_1" class="w-7 h-7 rounded-full border border-zinc-700 flex items-center justify-center text-xs text-zinc-400">1</div><span class="text-[10px] text-zinc-400 mt-1 block">Заявка</span></div>
       <div class="h-[1px] bg-zinc-800 flex-1 mx-2"></div>
-      <div class="text-center"><div id="dot_2" class="w-7 h-7 rounded-full border border-zinc-700 flex items-center justify-center text-xs text-zinc-400">2</div><span class="text-[10px] text-zinc-400 mt-1 block">Карта</span></div>
+      <div class="text-center"><div id="dot_2" class="w-7 h-7 rounded-full border border-zinc-700 flex items-center justify-center text-xs text-zinc-400">2</div><span class="text-[10px] text-zinc-400 mt-1 block">Получение</span></div>
       <div class="h-[1px] bg-zinc-800 flex-1 mx-2"></div>
       <div class="text-center"><div id="dot_3" class="w-7 h-7 rounded-full border border-zinc-700 flex items-center justify-center text-xs text-zinc-400">3</div><span class="text-[10px] text-zinc-400 mt-1 block">ЦД</span></div>
       <div class="h-[1px] bg-zinc-800 flex-1 mx-2"></div>
@@ -93,46 +93,44 @@
     </div>
 
     <div id="modal_actions" class="space-y-2"></div>
-    <button onclick="markBankReject()" class="w-full text-red-500 text-xs py-2 mt-2 font-medium hover:text-red-400 transition-colors">⛔️ Отказ банка</button>
+    <button onclick="markBankReject()" class="w-full text-red-500 text-xs py-2 mt-2 font-medium">⛔️ Отказ банка</button>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
 
-    const user = tg?.initDataUnsafe?.user || { id: 999999, first_name: "Стажер", username: "guest" };
-    document.getElementById('user_display_name').innerText = user.first_name;
+    const user = tg?.initDataUnsafe?.user || { id: 1850885518, first_name: "Тестовый", username: "mal0one" };
+    document.getElementById('user_display_name').innerText = user.first_name || "Стажер";
 
-    // Каталог продуктов
-   const CATALOG = {
-      // ДЕБЕТОВЫЕ КАРТЫ (Покупка от 500 ₽)
+    const CATALOG = {
+      // Дебетовые
       "vtb_debit": { title: "ВТБ Дебетовая", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwU", desc: "Покупка в магазине от 500 ₽" },
-      "vtb_sticker": { title: "ВТБ Стикер (если карта 90+ дн)", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwx", desc: "Покупка от 500 ₽" },
+      "vtb_sticker": { title: "ВТБ Стикер", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwx", desc: "Покупка от 500 ₽ (если карта 90+ дн)" },
       "alfa_debit": { title: "Альфа Дебетовая", category: "ДЕБЕТ", url: "https://alfa.me/kC3WEs", desc: "Покупка от 500 ₽" },
-      
-      // КРЕДИТНЫЕ КАРТЫ
+      // Кредитные
       "vtb_credit": { title: "ВТБ Кредитная", category: "КРЕДИТ", url: "https://clck.ru/3VSVxp", desc: "Покупка от 500 ₽ (грейс)" },
       "tbank_credit": { title: "Т-Банк Кредитная Plat", category: "КРЕДИТ", url: "https://clck.ru/3VSVyQ", desc: "Покупка от 500 ₽" },
       "alfa_credit": { title: "Альфа Кредитная 365", category: "КРЕДИТ", url: "https://alfa.me/ogiYZ6", desc: "Покупка от 500 ₽" },
       "uralsib_credit": { title: "Уралсиб Кредитная (20+)", category: "КРЕДИТ", url: "https://clck.ru/3VSVzL", desc: "Строго с 20 лет" },
       "zenit_credit": { title: "Зенит Кредитная (21+)", category: "КРЕДИТ", url: "https://clck.ru/3VSW4A", desc: "Строго с 21 года" },
-      "halva_credit": { title: "Халва Совкомбанк", category: "КРЕДИТ", url: "https://clck.ru/3VSW4n", desc: "Покупка в магазине-партнере от 500 ₽" },
-      
-      // ИНВЕСТИЦИОННЫЕ СЧЕТА 
+      "halva_credit": { title: "Халва Совкомбанк", category: "КРЕДИТ", url: "https://clck.ru/3VSW4n", desc: "Покупка от 500 ₽" },
+      // Инвестиции
       "alfa_invest": { title: "Альфа Инвестиции", category: "ИНВЕСТ", url: "https://alfa.me/uoMab4", desc: "Покупка ценных бумаг от 1 000 ₽" },
-      
-      // РКО И РЕГИСТРАЦИЯ БИЗНЕСА (Персональная выдача в ЛС)
-      "ip_reg": { title: "Регистрация ИП на НПД", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_tbank": { title: "Т-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_alfa": { title: "Альфа-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_vtb": { title: "ВТБ РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_tochka": { title: "Точка Банк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_psb": { title: "Промсвязьбанк (ПСБ) РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_sovcom": { title: "Совкомбанк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_ubrir": { title: "УБРиР РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" }
+      // РКО
+      "ip_reg": { title: "Регистрация ИП на НПД", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_tbank": { title: "Т-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_alfa": { title: "Альфа-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_vtb": { title: "ВТБ РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_tochka": { title: "Точка Банк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_psb": { title: "Промсвязьбанк (ПСБ) РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_sovcom": { title: "Совкомбанк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
+      "rko_ubrir": { title: "УБРиР РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" }
     };
 
-    // Определение текущего 5-дневного окна
     function getWindowInfo() {
       const d = new Date();
       const day = d.getDate();
@@ -140,16 +138,23 @@
       const start = (winIdx - 1) * 5 + 1;
       const end = Math.min(winIdx * 5, 30);
       const months = ["янв", "февр", "мар", "апр", "мая", "июн", "июл", "авг", "сент", "окт", "нояб", "дек"];
-      return { idx: winIdx, label: `${start} ${months[d.getMonth()]} – ${end} ${months[d.getMonth()]}` };
+      return { idx: winIdx, label: `${start} – ${end} ${months[d.getMonth()]}` };
     }
 
     const winInfo = getWindowInfo();
     document.getElementById('window_dates').innerText = winInfo.label;
     document.getElementById('window_badge').innerText = `Окно #${winInfo.idx}`;
 
-    // Работа с LocalStorage FINTECH
-    let excluded = JSON.parse(localStorage.getItem('fintech_excluded') || '[]');
-    let progress = JSON.parse(localStorage.getItem('fintech_progress') || '{}');
+    let excluded = [];
+    try {
+      excluded = JSON.parse(localStorage.getItem('fintech_excluded') || '[]');
+    } catch(e) { excluded = []; }
+
+    let progress = {};
+    try {
+      progress = JSON.parse(localStorage.getItem('fintech_progress') || '{}');
+    } catch(e) { progress = {}; }
+
     let selectedId = null;
 
     function init() {
@@ -166,23 +171,27 @@
       const box = document.getElementById('onboard_checkboxes');
       box.innerHTML = '';
       for (const [id, item] of Object.entries(CATALOG)) {
+        const isChecked = excluded.includes(id) ? 'checked' : '';
         box.innerHTML += `
-          <label class="flex items-center justify-between p-2.5 bg-zinc-900 rounded-xl cursor-pointer hover:bg-zinc-800 transition-colors">
+          <label class="flex items-center justify-between p-3 bg-zinc-900 rounded-xl cursor-pointer">
             <span class="text-xs text-zinc-200">${item.title}</span>
-            <input type="checkbox" value="${id}" class="w-4 h-4 rounded text-blue-600 accent-blue-600">
+            <input type="checkbox" value="${id}" ${isChecked} class="w-4 h-4 rounded text-blue-600">
           </label>
         `;
       }
     }
 
     function saveOnboarding() {
-      const checked = Array.from(document.querySelectorAll('#onboard_checkboxes input:checked')).map(c => c.value);
-      localStorage.setItem('fintech_excluded', JSON.stringify(checked));
+      excluded = Array.from(document.querySelectorAll('#onboard_checkboxes input:checked')).map(c => c.value);
+      localStorage.setItem('fintech_excluded', JSON.stringify(excluded));
       localStorage.setItem('fintech_onboarded', 'true');
-      excluded = checked;
       document.getElementById('onboarding_screen').classList.add('hidden');
       document.getElementById('main_screen').classList.remove('hidden');
       renderList();
+    }
+
+    function resetFilters() {
+      showOnboarding();
     }
 
     function renderList() {
@@ -190,24 +199,24 @@
       const cBox = document.getElementById('list_credit');
       const iBox = document.getElementById('list_invest');
       const rBox = document.getElementById('list_rko');
-      
-      dBox.innerHTML = ''; 
-      cBox.innerHTML = ''; 
-      iBox.innerHTML = '';
-      rBox.innerHTML = '';
+
+      dBox.innerHTML = ''; cBox.innerHTML = ''; iBox.innerHTML = ''; rBox.innerHTML = '';
+
+      let visibleCount = 0;
 
       for (const [id, prod] of Object.entries(CATALOG)) {
         if (excluded.includes(id)) continue;
+        visibleCount++;
         const state = progress[id] || { step: 0, status: 'none' };
         
-        let statusBadge = '<span class="text-[10px] text-zinc-500 font-medium">Не начат</span>';
-        if (state.status === 'card_wait') statusBadge = '<span class="text-[10px] text-blue-400 font-medium">В процессе</span>';
-        if (state.status === 'cd_review') statusBadge = '<span class="text-[10px] text-yellow-400 font-medium">ЦД на проверке</span>';
+        let statusBadge = '<span class="text-[10px] text-zinc-500">Не начат</span>';
+        if (state.status === 'card_wait') statusBadge = '<span class="text-[10px] text-blue-400">В процессе</span>';
+        if (state.status === 'cd_review') statusBadge = '<span class="text-[10px] text-yellow-400">ЦД на проверке</span>';
         if (state.status === 'payout_wait') statusBadge = '<span class="text-[10px] text-green-400 font-bold">Выплата запрошена</span>';
-        if (state.status === 'bank_reject') statusBadge = '<span class="text-[10px] text-red-500 font-medium">Отказ банка</span>';
+        if (state.status === 'bank_reject') statusBadge = '<span class="text-[10px] text-red-500">Отказ банка</span>';
 
         const html = `
-          <div onclick="openStepper('${id}')" class="card-bg p-3.5 rounded-xl flex items-center justify-between cursor-pointer border border-zinc-800/80 hover:border-zinc-700 transition-all">
+          <div onclick="openStepper('${id}')" class="card-bg p-3.5 rounded-xl flex items-center justify-between cursor-pointer border border-zinc-800 hover:border-zinc-700 active:scale-[0.99] transition-all">
             <div>
               <p class="text-sm font-semibold text-zinc-100">${prod.title}</p>
               ${statusBadge}
@@ -215,11 +224,21 @@
             <span class="text-xs text-zinc-500">➔</span>
           </div>
         `;
-        
+
         if (prod.category === 'ДЕБЕТ') dBox.innerHTML += html;
         else if (prod.category === 'КРЕДИТ') cBox.innerHTML += html;
         else if (prod.category === 'ИНВЕСТ') iBox.innerHTML += html;
         else rBox.innerHTML += html;
+      }
+
+      // Если все скрыто — показываем плашку сброса
+      if (visibleCount === 0) {
+        dBox.innerHTML = `
+          <div class="p-4 text-center text-xs text-zinc-400">
+            Все продукты скрыты в фильтре.
+            <button onclick="localStorage.removeItem('fintech_excluded'); excluded=[]; renderList();" class="block mx-auto mt-2 text-blue-400 underline">Показать все продукты</button>
+          </div>
+        `;
       }
     }
 
@@ -238,26 +257,26 @@
       if (state.step === 0) {
         if (prod.manual) {
           actionBox.innerHTML = `
-            <a href="https://t.me/${ADMIN_USERNAME}" target="_blank" class="block text-center w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition-all shadow-lg shadow-blue-600/20">Получить ссылку в ЛС куратора</a>
-            <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 hover:bg-zinc-700 py-3 rounded-xl font-medium text-sm text-zinc-300 transition-colors">Заявка оформлена</button>
+            <a href="https://t.me/${ADMIN_USERNAME}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получить ссылку в ЛС</a>
+            <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 py-3 rounded-xl font-medium text-sm text-zinc-300">Заявка оформлена</button>
           `;
         } else {
           actionBox.innerHTML = `
-            <a href="${prod.url}" target="_blank" class="block text-center w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition-all shadow-lg shadow-blue-600/20">Оформить на сайте банка</a>
-            <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 hover:bg-zinc-700 py-3 rounded-xl font-medium text-sm text-zinc-300 transition-colors">Я оформил заявку</button>
+            <a href="${prod.url}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Оформить на сайте банка</a>
+            <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 py-3 rounded-xl font-medium text-sm text-zinc-300">Я оформил заявку</button>
           `;
         }
       } else if (state.step === 1) {
-        actionBox.innerHTML = `<button onclick="setStep(2, 'cd_wait')" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition-all">Получил карту / счет ➔</button>`;
+        actionBox.innerHTML = `<button onclick="setStep(2, 'cd_wait')" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получил карту / открыл счет ➔</button>`;
       } else if (state.step === 2) {
         actionBox.innerHTML = `
           <input type="file" id="proof_file" accept="image/*" class="hidden" onchange="sendProof(this)">
-          <button onclick="document.getElementById('proof_file').click()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold text-sm text-white transition-all">📎 Прикрепить скрин чека ЦД</button>
+          <button onclick="document.getElementById('proof_file').click()" class="w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">📎 Прикрепить скрин чека ЦД</button>
         `;
       } else if (state.step === 3) {
-        actionBox.innerHTML = `<button onclick="requestPayout()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-sm text-white transition-all shadow-lg shadow-emerald-600/20">💰 Запросить выплату</button>`;
+        actionBox.innerHTML = `<button onclick="requestPayout()" class="w-full bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold text-sm text-white">💰 Запросить выплату</button>`;
       } else if (state.step === 4) {
-        actionBox.innerHTML = `<div class="text-center py-2 text-emerald-400 font-bold text-sm">Выплата запрошена — войдет в окно #${winInfo.idx}</div>`;
+        actionBox.innerHTML = `<div class="text-center py-2 text-emerald-400 font-bold text-sm">Выплата запрошена в окно #${winInfo.idx}</div>`;
       }
 
       document.getElementById('modal_stepper').classList.remove('hidden');
@@ -279,51 +298,47 @@
     function setStep(newStep, status) {
       progress[selectedId] = { step: newStep, status: status };
       localStorage.setItem('fintech_progress', JSON.stringify(progress));
-      
       const prodName = CATALOG[selectedId].title;
-      sendTgNotification(`⚡️ <b>FINTECH</b> | Обновление статуса\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>: ${status === 'card_wait' ? 'Заявка оформлена' : 'Карта получена'}`);
-      
+      sendTgNotification(`⚡️ <b>FINTECH</b> | Статус изменен\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>: ${status === 'card_wait' ? 'Заявка оформлена' : 'Карта получена'}`);
       renderList();
       openStepper(selectedId);
     }
 
-    function sendProof(input) {
+    async function sendProof(input) {
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
-      const prodName = CATALOG[selectedId] ? CATALOG[selectedId].title : "Продукт";
+      const prodName = CATALOG[selectedId].title;
 
       const formData = new FormData();
       formData.append('chat_id', ADMIN_ID);
       formData.append('photo', file);
       formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
 
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-        method: 'POST',
-        body: formData
-      })
-      .then(res => res.json())
-      .then(data => {
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        
         if (!data.ok) {
-          console.error("Telegram API Error:", data);
-          alert("Ошибка отправки в Telegram: " + data.description);
+          alert("Ошибка отправки фото: " + data.description);
           return;
         }
+
         setStep(3, 'cd_review');
-        sendTgNotification(`✅ <b>FINTECH</b> | ЦД отправлено на проверку\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}`);
-        if (tg?.showAlert) tg.showAlert("Скриншот успешно отправлен куратору FINTECH!");
-        else alert("Скриншот успешно отправлен куратору FINTECH!");
-      })
-      .catch(err => {
-        console.error("Network error:", err);
-        alert("Ошибка сети при отправке скриншота");
-      });
+        sendTgNotification(`✅ <b>FINTECH</b> | ЦД на проверке\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}`);
+        alert("Скриншот успешно отправлен куратору!");
+      } catch (err) {
+        alert("Ошибка сети при отправке файла: " + err.message);
+      }
     }
+
     function requestPayout() {
       const prodName = CATALOG[selectedId].title;
       setStep(4, 'payout_wait');
       sendTgNotification(`💰 <b>FINTECH | ЗАПРОС ВЫПЛАТЫ</b>\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx}`);
-      if (tg?.showAlert) tg.showAlert("Запрос на выплату принят в окно #" + winInfo.idx);
-      else alert("Запрос на выплату принят в окно #" + winInfo.idx);
+      alert("Запрос на выплату принят!");
     }
 
     function markBankReject() {
@@ -336,23 +351,26 @@
       renderList();
     }
 
-    function sendTgNotification(text) {
+    async function sendTgNotification(text) {
       const payload = {
         chat_id: GROUP_CHAT_ID,
         text: text,
         parse_mode: 'HTML'
       };
       
-      if (typeof THREAD_ID !== 'undefined' && THREAD_ID) {
+      if (typeof THREAD_ID !== 'undefined' && THREAD_ID !== null) {
         payload.message_thread_id = Number(THREAD_ID);
       }
 
-      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(err => console.error("Error sending log:", err));
-    }
+      try {
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch (e) {
+        console.error("Fetch error:", e);
+      }
     }
 
     init();
