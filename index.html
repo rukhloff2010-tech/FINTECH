@@ -17,10 +17,10 @@
 
   <!-- Конфигурация Telegram API (Вставь свои данные) -->
   <script>
-    const BOT_TOKEN = "ВАШ_ТОКЕН_БОТА";
-    const ADMIN_ID = "ТВОЙ_CHAT_ID";         // Твой личный Telegram ID
-    const GROUP_CHAT_ID = "-100XXXXXXXXXX";  // ID группы команды
-    const ADMIN_USERNAME = "твой_ник_тг";   // Для ручной выдачи ссылок РКО и ИП
+    const BOT_TOKEN = "8741449800:AAHTyC8VY1wOyIgZQRlldbGg22ze4Gvu18g";
+    const ADMIN_ID = "1850885518";         // Твой личный Telegram ID
+    const GROUP_CHAT_ID = "-1004462228867";  // ID группы команды
+    const ADMIN_USERNAME = "mal0one";   // Для ручной выдачи ссылок РКО и ИП
   </script>
 
   <!-- Шапка окна FINTECH -->
@@ -57,6 +57,11 @@
     <div>
       <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Кредитные карты</h2>
       <div id="list_credit" class="space-y-2"></div>
+    </div>
+    <!-- НОВЫЙ ОТДЕЛЬНЫЙ РАЗДЕЛ ДЛЯ ИНВЕСТИЦИЙ -->
+    <div>
+      <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">Инвестиции</h2>
+      <div id="list_invest" class="space-y-2"></div>
     </div>
     <div>
       <h2 class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-2">РКО и Регистрация бизнеса</h2>
@@ -98,24 +103,32 @@
     document.getElementById('user_display_name').innerText = user.first_name;
 
     // Каталог продуктов
-    const CATALOG = {
-      // Дебетовые
-      "vtb_debit": { title: "ВТБ Дебетовая", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwU", desc: "Покупка от 300 ₽ в магазине" },
-      "vtb_sticker": { title: "ВТБ Стикер (если есть карта 90+ дн)", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwx", desc: "Покупка от 300 ₽" },
-      "alfa_debit": { title: "Альфа Дебетовая", category: "ДЕБЕТ", url: "https://alfa.me/kC3WEs", desc: "Покупка от 300 ₽" },
-      // Кредитные
+   const CATALOG = {
+      // ДЕБЕТОВЫЕ КАРТЫ (Покупка от 500 ₽)
+      "vtb_debit": { title: "ВТБ Дебетовая", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwU", desc: "Покупка в магазине от 500 ₽" },
+      "vtb_sticker": { title: "ВТБ Стикер (если карта 90+ дн)", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwx", desc: "Покупка от 500 ₽" },
+      "alfa_debit": { title: "Альфа Дебетовая", category: "ДЕБЕТ", url: "https://alfa.me/kC3WEs", desc: "Покупка от 500 ₽" },
+      
+      // КРЕДИТНЫЕ КАРТЫ
       "vtb_credit": { title: "ВТБ Кредитная", category: "КРЕДИТ", url: "https://clck.ru/3VSVxp", desc: "Покупка от 500 ₽ (грейс)" },
       "tbank_credit": { title: "Т-Банк Кредитная Plat", category: "КРЕДИТ", url: "https://clck.ru/3VSVyQ", desc: "Покупка от 500 ₽" },
       "alfa_credit": { title: "Альфа Кредитная 365", category: "КРЕДИТ", url: "https://alfa.me/ogiYZ6", desc: "Покупка от 500 ₽" },
       "uralsib_credit": { title: "Уралсиб Кредитная (20+)", category: "КРЕДИТ", url: "https://clck.ru/3VSVzL", desc: "Строго с 20 лет" },
       "zenit_credit": { title: "Зенит Кредитная (21+)", category: "КРЕДИТ", url: "https://clck.ru/3VSW4A", desc: "Строго с 21 года" },
-      "halva_credit": { title: "Халва Совкомбанк", category: "КРЕДИТ", url: "https://clck.ru/3VSW4n", desc: "Покупка в магазине-партнере" },
-      "alfa_invest": { title: "Альфа Инвестиции", category: "КРЕДИТ", url: "https://alfa.me/uoMab4", desc: "Покупка бумаг от 1 000 ₽" },
-      // РКО и ИП
+      "halva_credit": { title: "Халва Совкомбанк", category: "КРЕДИТ", url: "https://clck.ru/3VSW4n", desc: "Покупка в магазине-партнере от 500 ₽" },
+      
+      // ИНВЕСТИЦИОННЫЕ СЧЕТА 
+      "alfa_invest": { title: "Альфа Инвестиции", category: "ИНВЕСТ", url: "https://alfa.me/uoMab4", desc: "Покупка ценных бумаг от 1 000 ₽" },
+      
+      // РКО И РЕГИСТРАЦИЯ БИЗНЕСА (Персональная выдача в ЛС)
       "ip_reg": { title: "Регистрация ИП на НПД", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
       "rko_tbank": { title: "Т-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
       "rko_alfa": { title: "Альфа-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
-      "rko_vtb": { title: "ВТБ РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" }
+      "rko_vtb": { title: "ВТБ РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
+      "rko_tochka": { title: "Точка Банк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
+      "rko_psb": { title: "Промсвязьбанк (ПСБ) РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
+      "rko_sovcom": { title: "Совкомбанк РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" },
+      "rko_ubrir": { title: "УБРиР РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС куратора" }
     };
 
     // Определение текущего 5-дневного окна
@@ -174,15 +187,20 @@
     function renderList() {
       const dBox = document.getElementById('list_debit');
       const cBox = document.getElementById('list_credit');
+      const iBox = document.getElementById('list_invest');
       const rBox = document.getElementById('list_rko');
-      dBox.innerHTML = ''; cBox.innerHTML = ''; rBox.innerHTML = '';
+      
+      dBox.innerHTML = ''; 
+      cBox.innerHTML = ''; 
+      iBox.innerHTML = '';
+      rBox.innerHTML = '';
 
       for (const [id, prod] of Object.entries(CATALOG)) {
         if (excluded.includes(id)) continue;
         const state = progress[id] || { step: 0, status: 'none' };
         
         let statusBadge = '<span class="text-[10px] text-zinc-500 font-medium">Не начат</span>';
-        if (state.status === 'card_wait') statusBadge = '<span class="text-[10px] text-blue-400 font-medium">Карта в пути</span>';
+        if (state.status === 'card_wait') statusBadge = '<span class="text-[10px] text-blue-400 font-medium">В процессе</span>';
         if (state.status === 'cd_review') statusBadge = '<span class="text-[10px] text-yellow-400 font-medium">ЦД на проверке</span>';
         if (state.status === 'payout_wait') statusBadge = '<span class="text-[10px] text-green-400 font-bold">Выплата запрошена</span>';
         if (state.status === 'bank_reject') statusBadge = '<span class="text-[10px] text-red-500 font-medium">Отказ банка</span>';
@@ -196,8 +214,10 @@
             <span class="text-xs text-zinc-500">➔</span>
           </div>
         `;
+        
         if (prod.category === 'ДЕБЕТ') dBox.innerHTML += html;
         else if (prod.category === 'КРЕДИТ') cBox.innerHTML += html;
+        else if (prod.category === 'ИНВЕСТ') iBox.innerHTML += html;
         else rBox.innerHTML += html;
       }
     }
