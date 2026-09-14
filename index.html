@@ -371,6 +371,7 @@
       formData.append('chat_id', ADMIN_ID);
       formData.append('photo', file);
       formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
+      formData.append('parse_mode', 'HTML');
 
       try {
         const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
