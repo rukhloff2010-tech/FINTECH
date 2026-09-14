@@ -296,12 +296,70 @@
     }
 
     function setStep(newStep, status) {
+      const current = progress[selectedId] || {};
+      
+      // Блокируем повторную отправку, если статус не изменился
+      if (current.step === newStep && current.status === status) {
+        openStepper(selectedId);
+        return;
+      }
+
       progress[selectedId] = { step: newStep, status: status };
       localStorage.setItem('fintech_progress', JSON.stringify(progress));
+      
       const prodName = CATALOG[selectedId].title;
-      sendTgNotification(`⚡️ <b>FINTECH</b> | Статус изменен\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>: ${status === 'card_wait' ? 'Заявка оформлена' : 'Карта получена'}`);
+
+      // Точные тексты только для реальных действий
+      if (status === 'card_wait') {
+        sendTgNotification(`⚡️ <b>FINTECH</b> | Заявка оформлена\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
+      } else if (status === 'cd_wait') {
+        sendTgNotification(`💳 <b>FINTECH</b> | Карта/счет получены\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
+      }
+
       renderList();
       openStepper(selectedId);
+    }
+
+    async function sendProof(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const prodName = CATALOG[selectedId].title;
+
+      // Блокируем повторные нажатия во время отправки
+      input.disabled = true;
+
+      const formData = new FormData();
+      formData.append('chat_id', ADMIN_ID);
+      formData.append('photo', file);
+      formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        
+        if (!data.ok) {
+          alert("Ошибка отправки фото: " + data.description);
+          input.disabled = false;
+          return;
+        }
+
+        // Обновляем состояние напрямую без лишнего вызова setStep с ложным статусом
+        progress[selectedId] = { step: 3, status: 'cd_review' };
+        localStorage.setItem('fintech_progress', JSON.stringify(progress));
+
+        sendTgNotification(`✅ <b>FINTECH</b> | ЦД на проверке\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
+        
+        renderList();
+        openStepper(selectedId);
+        alert("Скриншот успешно отправлен куратору!");
+      } catch (err) {
+        alert("Ошибка сети при отправке файла: " + err.message);
+      } finally {
+        input.disabled = false;
+      }
     }
 
     async function sendProof(input) {
