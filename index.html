@@ -124,19 +124,102 @@
 
     const CATALOG = {
       // Дебетовые
-      "vtb_debit": { title: "ВТБ Дебетовая", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwU", desc: "Покупка в магазине от 500 ₽" },
-      "vtb_sticker": { title: "ВТБ Стикер", category: "ДЕБЕТ", url: "https://clck.ru/3VSVwx", desc: "Покупка от 500 ₽ (если карта 90+ дн)" },
-      "alfa_debit": { title: "Альфа Дебетовая", category: "ДЕБЕТ", url: "https://alfa.me/kC3WEs", desc: "Покупка от 500 ₽" },
+      "vtb_debit": { 
+        title: "ВТБ Дебетовая", 
+        category: "ДЕБЕТ", 
+        urls: {
+          artem: "https://clck.ru/3VSVwU",
+          albert: "https://clck.ru/3VU2MF"
+        }, 
+        desc: "Покупка в магазине от 500 ₽" 
+      },
+      "vtb_sticker": { 
+        title: "ВТБ Стикер", 
+        category: "ДЕБЕТ", 
+        urls: {
+          artem: "https://clck.ru/3VSVwx",
+          albert: "https://clck.ru/3VU2Rn"
+        }, 
+        desc: "Покупка от 500 ₽ (если карта 90+ дн)" 
+      },
+      "alfa_debit": { 
+        title: "Альфа Дебетовая", 
+        category: "ДЕБЕТ", 
+        urls: {
+          artem: "https://alfa.me/kC3WEs",
+          albert: "https://alfa.me/kC3WEs"
+        }, 
+        desc: "Покупка от 500 ₽" 
+      },
+
       // Кредитные
-      "vtb_credit": { title: "ВТБ Кредитная", category: "КРЕДИТ", url: "https://clck.ru/3VSVxp", desc: "Покупка от 500 ₽ (грейс)" },
-      "tbank_credit": { title: "Т-Банк Кредитная Plat", category: "КРЕДИТ", url: "https://clck.ru/3VSVyQ", desc: "Покупка от 500 ₽" },
-      "alfa_credit": { title: "Альфа Кредитная 365", category: "КРЕДИТ", url: "https://alfa.me/ogiYZ6", desc: "Покупка от 500 ₽" },
-      "uralsib_credit": { title: "Уралсиб Кредитная (20+)", category: "КРЕДИТ", url: "https://clck.ru/3VSVzL", desc: "Строго с 20 лет" },
-      "zenit_credit": { title: "Зенит Кредитная (21+)", category: "КРЕДИТ", url: "https://clck.ru/3VSW4A", desc: "Строго с 21 года" },
-      "halva_credit": { title: "Халва Совкомбанк", category: "КРЕДИТ", url: "https://clck.ru/3VSW4n", desc: "Покупка от 500 ₽" },
+      "vtb_credit": { 
+        title: "ВТБ Кредитная", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://clck.ru/3VSVxp",
+          albert: "https://clck.ru/3VU2T5"
+        }, 
+        desc: "Покупка от 500 ₽ (грейс)" 
+      },
+      "tbank_credit": { 
+        title: "Т-Банк Кредитная Plat", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://clck.ru/3VSVyQ",
+          albert: "https://clck.ru/3VU2Tt"
+        }, 
+        desc: "Покупка от 500 ₽" 
+      },
+      "alfa_credit": { 
+        title: "Альфа Кредитная 365", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://alfa.me/ogiYZ6",
+          albert: "https://alfa.me/ogiYZ6"
+        }, 
+        desc: "Покупка от 500 ₽" 
+      },
+      "uralsib_credit": { 
+        title: "Уралсиб Кредитная (20+)", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://clck.ru/3VSVzL",
+          albert: "https://clck.ru/3VU2Uj"
+        }, 
+        desc: "Строго с 20 лет" 
+      },
+      "zenit_credit": { 
+        title: "Зенит Кредитная (21+)", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://clck.ru/3VSW4A",
+          albert: "https://clck.ru/3VU2Vu"
+        }, 
+        desc: "Строго с 21 года" 
+      },
+      "halva_credit": { 
+        title: "Халва Совкомбанк", 
+        category: "КРЕДИТ", 
+        urls: {
+          artem: "https://clck.ru/3VSW4n",
+          albert: "https://clck.ru/3VU2WV"
+        }, 
+        desc: "Покупка от 500 ₽" 
+      },
+
       // Инвестиции
-      "alfa_invest": { title: "Альфа Инвестиции", category: "ИНВЕСТ", url: "https://alfa.me/uoMab4", desc: "Покупка ценных бумаг от 1 000 ₽" },
-      // РКО
+      "alfa_invest": { 
+        title: "Альфа Инвестиции", 
+        category: "ИНВЕСТ", 
+        urls: {
+          artem: "https://alfa.me/uoMab4",
+          albert: "https://alfa.me/uoMab4"
+        }, 
+        desc: "Покупка ценных бумаг от 1 000 ₽" 
+      },
+
+      // РКО и Регистрация бизнеса
       "ip_reg": { title: "Регистрация ИП на НПД", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
       "rko_tbank": { title: "Т-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
       "rko_alfa": { title: "Альфа-Бизнес РКО", category: "РКО", manual: true, desc: "Персональная ссылка в ЛС" },
@@ -271,6 +354,7 @@
       selectedId = pId;
       const prod = CATALOG[pId];
       const state = progress[pId] || { step: 0, status: 'none' };
+      const curator = ADMINS[selectedCurator];
 
       document.getElementById('modal_title').innerText = prod.title;
       document.getElementById('modal_desc').innerText = prod.desc;
@@ -282,12 +366,13 @@
       if (state.step === 0) {
         if (prod.manual) {
           actionBox.innerHTML = `
-            <a href="https://t.me/${ADMINS[selectedCurator].tg}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получить ссылку в ЛС (${ADMINS[selectedCurator].name})</a>
+            <a href="https://t.me/${curator.tg}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получить ссылку в ЛС (${curator.name})</a>
             <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 py-3 rounded-xl font-medium text-sm text-zinc-300">Заявка оформлена</button>
           `;
         } else {
+          const targetUrl = (prod.urls && prod.urls[selectedCurator]) ? prod.urls[selectedCurator] : (prod.url || "#");
           actionBox.innerHTML = `
-            <a href="${prod.url}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Оформить на сайте банка</a>
+            <a href="${targetUrl}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Оформить на сайте банка</a>
             <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 py-3 rounded-xl font-medium text-sm text-zinc-300">Я оформил заявку</button>
           `;
         }
