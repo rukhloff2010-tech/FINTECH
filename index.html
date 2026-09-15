@@ -16,24 +16,40 @@
 <body class="p-4 pb-28 select-none">
 
   <script>
-    // ВСТАВЬ СЮДА СВОЙ СВЕЖИЙ ТОКЕН ИЗ BOTFATHER
     const BOT_TOKEN = "8741449800:AAGlrudGcl4Jz86IXv93dNHgfP95tiBFdxs";
-    const ADMIN_ID = "1850885518";
     const GROUP_CHAT_ID = "-1004462228867";
-    const ADMIN_USERNAME = "mal0one";
     const THREAD_ID = null; // Поставь номер ветки (например 15) или оставь null
+
+    // Список кураторов
+    const ADMINS = {
+      "artem": { name: "Артём", tg: "mal0one", id: "1850885518" },
+      "albert": { name: "Альберт", tg: "soyl_al", id: "7016830302" }
+    };
+
+    // Текущий выбранный куратор (по умолчанию Артём)
+    let selectedCurator = localStorage.getItem('fintech_curator') || 'artem';
   </script>
 
-  <!-- Шапка FINTECH -->
-  <div class="flex justify-between items-center mb-4">
+  <!-- Шапка FINTECH с выбором куратора -->
+  <div class="flex justify-between items-start mb-4">
     <div>
       <div class="flex items-center gap-1.5">
         <span class="text-xs font-black tracking-widest text-blue-500 uppercase">FINTECH</span>
         <span class="text-zinc-600 text-xs">•</span>
         <h1 id="user_display_name" class="text-base font-bold text-white">Стажер</h1>
-        <button onclick="resetFilters()" class="text-zinc-500 hover:text-zinc-300 text-xs ml-1" title="Сбросить фильтр карт">⚙️</button>
+        <button onclick="resetFilters()" class="text-zinc-500 hover:text-zinc-300 text-xs ml-1" title="Настройки">⚙️</button>
       </div>
-      <p id="window_dates" class="text-xs text-zinc-400 mt-0.5">Окно выплат</p>
+
+      <!-- Выбор куратора -->
+      <div class="flex items-center gap-1.5 mt-1">
+        <span class="text-[11px] text-zinc-500">Куратор:</span>
+        <select id="curator_select" onchange="changeCurator(this.value)" class="bg-zinc-800 text-blue-400 text-xs font-semibold rounded-md px-1.5 py-0.5 border border-zinc-700 outline-none">
+          <option value="artem">Артём (@mal0one)</option>
+          <option value="albert">Альберт (@soyl_al)</option>
+        </select>
+      </div>
+
+      <p id="window_dates" class="text-xs text-zinc-400 mt-1">Окно выплат</p>
     </div>
     <span id="window_badge" class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-2.5 py-1 rounded-full font-bold">Окно #1</span>
   </div>
@@ -158,11 +174,21 @@
     let selectedId = null;
 
     function init() {
+      const selectEl = document.getElementById('curator_select');
+      if (selectEl) selectEl.value = selectedCurator;
+
       if (!localStorage.getItem('fintech_onboarded')) {
         showOnboarding();
       } else {
         renderList();
       }
+    }
+
+    function changeCurator(val) {
+      selectedCurator = val;
+      localStorage.setItem('fintech_curator', val);
+      if (tg?.showAlert) tg.showAlert(`Твой куратор: ${ADMINS[val].name}`);
+      else alert(`Твой куратор: ${ADMINS[val].name}`);
     }
 
     function showOnboarding() {
@@ -231,7 +257,6 @@
         else rBox.innerHTML += html;
       }
 
-      // Если все скрыто — показываем плашку сброса
       if (visibleCount === 0) {
         dBox.innerHTML = `
           <div class="p-4 text-center text-xs text-zinc-400">
@@ -257,7 +282,7 @@
       if (state.step === 0) {
         if (prod.manual) {
           actionBox.innerHTML = `
-            <a href="https://t.me/${ADMIN_USERNAME}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получить ссылку в ЛС</a>
+            <a href="https://t.me/${ADMINS[selectedCurator].tg}" target="_blank" class="block text-center w-full bg-blue-600 py-3 rounded-xl font-bold text-sm text-white">Получить ссылку в ЛС (${ADMINS[selectedCurator].name})</a>
             <button onclick="setStep(1, 'card_wait')" class="w-full bg-zinc-800 py-3 rounded-xl font-medium text-sm text-zinc-300">Заявка оформлена</button>
           `;
         } else {
@@ -298,7 +323,6 @@
     function setStep(newStep, status) {
       const current = progress[selectedId] || {};
       
-      // Блокируем повторную отправку, если статус не изменился
       if (current.step === newStep && current.status === status) {
         openStepper(selectedId);
         return;
@@ -308,12 +332,12 @@
       localStorage.setItem('fintech_progress', JSON.stringify(progress));
       
       const prodName = CATALOG[selectedId].title;
+      const curator = ADMINS[selectedCurator];
 
-      // Точные тексты только для реальных действий
       if (status === 'card_wait') {
-        sendTgNotification(`⚡️ <b>FINTECH</b> | Заявка оформлена\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
+        sendTgNotification(`⚡️ <b>FINTECH</b> | Заявка оформлена\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n👨‍🏫 Куратор: <b>${curator.name}</b>\n💳 <b>${prodName}</b>`);
       } else if (status === 'cd_wait') {
-        sendTgNotification(`💳 <b>FINTECH</b> | Карта/счет получены\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
+        sendTgNotification(`💳 <b>FINTECH</b> | Карта/счет получены\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n👨‍🏫 Куратор: <b>${curator.name}</b>\n💳 <b>${prodName}</b>`);
       }
 
       renderList();
@@ -324,53 +348,14 @@
       if (!input.files || !input.files[0]) return;
       const file = input.files[0];
       const prodName = CATALOG[selectedId].title;
+      const curator = ADMINS[selectedCurator];
 
-      // Блокируем повторные нажатия во время отправки
       input.disabled = true;
 
       const formData = new FormData();
-      formData.append('chat_id', ADMIN_ID);
+      formData.append('chat_id', curator.id);
       formData.append('photo', file);
-      formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
-
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        
-        if (!data.ok) {
-          alert("Ошибка отправки фото: " + data.description);
-          input.disabled = false;
-          return;
-        }
-
-        // Обновляем состояние напрямую без лишнего вызова setStep с ложным статусом
-        progress[selectedId] = { step: 3, status: 'cd_review' };
-        localStorage.setItem('fintech_progress', JSON.stringify(progress));
-
-        sendTgNotification(`✅ <b>FINTECH</b> | ЦД на проверке\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n💳 <b>${prodName}</b>`);
-        
-        renderList();
-        openStepper(selectedId);
-        alert("Скриншот успешно отправлен куратору!");
-      } catch (err) {
-        alert("Ошибка сети при отправке файла: " + err.message);
-      } finally {
-        input.disabled = false;
-      }
-    }
-
-    async function sendProof(input) {
-      if (!input.files || !input.files[0]) return;
-      const file = input.files[0];
-      const prodName = CATALOG[selectedId].title;
-
-      const formData = new FormData();
-      formData.append('chat_id', ADMIN_ID);
-      formData.append('photo', file);
-      formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
+      formData.append('caption', `🔍 <b>FINTECH | Проверка ЦД</b>\n\n👤 ${user.first_name} (@${user.username || 'нет'})\n👨‍🏫 Куратор: ${curator.name}\n💳 ${prodName}\n📅 Окно #${winInfo.idx} (${winInfo.label})`);
       formData.append('parse_mode', 'HTML');
 
       try {
@@ -381,22 +366,31 @@
         const data = await res.json();
         
         if (!data.ok) {
-          alert("Ошибка отправки фото: " + data.description);
+          alert("Ошибка отправки фото куратору: " + data.description);
+          input.disabled = false;
           return;
         }
 
-        setStep(3, 'cd_review');
-        sendTgNotification(`✅ <b>FINTECH</b> | ЦД на проверке\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}`);
-        alert("Скриншот успешно отправлен куратору!");
+        progress[selectedId] = { step: 3, status: 'cd_review' };
+        localStorage.setItem('fintech_progress', JSON.stringify(progress));
+
+        sendTgNotification(`✅ <b>FINTECH</b> | ЦД на проверке\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n👨‍🏫 Куратор: <b>${curator.name}</b>\n💳 <b>${prodName}</b>`);
+        
+        renderList();
+        openStepper(selectedId);
+        alert(`Скриншот успешно отправлен куратору (${curator.name})!`);
       } catch (err) {
-        alert("Ошибка сети при отправке файла: " + err.message);
+        alert("Ошибка сети при отправке: " + err.message);
+      } finally {
+        input.disabled = false;
       }
     }
 
     function requestPayout() {
       const prodName = CATALOG[selectedId].title;
+      const curator = ADMINS[selectedCurator];
       setStep(4, 'payout_wait');
-      sendTgNotification(`💰 <b>FINTECH | ЗАПРОС ВЫПЛАТЫ</b>\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}\n📅 Окно #${winInfo.idx}`);
+      sendTgNotification(`💰 <b>FINTECH | ЗАПРОС ВЫПЛАТЫ</b>\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n👨‍🏫 Куратор: <b>${curator.name}</b>\n💳 <b>${prodName}</b>\n📅 Окно #${winInfo.idx}`);
       alert("Запрос на выплату принят!");
     }
 
@@ -405,7 +399,8 @@
       progress[selectedId] = { step: 0, status: 'bank_reject' };
       localStorage.setItem('fintech_progress', JSON.stringify(progress));
       const prodName = CATALOG[selectedId].title;
-      sendTgNotification(`⛔️ <b>FINTECH | Отказ банка</b>\n👤 ${user.first_name} (@${user.username || 'нет'})\n💳 ${prodName}`);
+      const curator = ADMINS[selectedCurator];
+      sendTgNotification(`⛔️ <b>FINTECH | Отказ банка</b>\n👤 <b>${user.first_name}</b> (@${user.username || 'нет'})\n👨‍🏫 Куратор: <b>${curator.name}</b>\n💳 <b>${prodName}</b>`);
       closeModal();
       renderList();
     }
